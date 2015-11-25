@@ -1,0 +1,162 @@
+<html>
+	<head>
+		<title>Stephen's Startpage</title>
+		<link rel="icon" href="images/sclark.io.ico" type="image/x-icon">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Montserrat:400,700">
+		<style>
+			* {
+				padding: 0;
+				margin: 0;
+			}
+			body {
+				font-family: Montserrat, arial, sans-serif;
+				background-color: #ccc;
+				color: #95a5a6;
+				padding: 25px;
+			}
+			a {
+				color: #95a5a6;
+				text-decoration: none;
+			}
+			.ico {
+				height: 15px;
+				width: 15px;
+				margin: 0 10px 0 10px;
+				border-radius: 2px;
+			}
+			.card {
+				width: 33%;
+				min-width: 450px;
+				padding: 10px;
+				margin: 15px auto 15px auto;
+				background-color: #fff;
+				border-radius: 5px;
+			}
+			.entry {
+				width: 100%;
+				font-size: 20px;
+				cursor: pointer;
+				padding: 5px 0 5px 0;
+				border-radius: 5px;
+				transition: background-color 0.2s ease-in-out;
+			}
+			.entry:hover {
+				background-color: #ccc;
+			}
+			#search {
+				width: 100%;
+				font-family: Montserrat, arial, sans-serif;
+				font-size: 20px;
+				padding: 5px;
+				border: 1px solid #aaa;
+				border-radius: 3px;
+				outline: none;
+			}
+			#search:focus, #search:hover {
+				border-color: #3498db;
+			}
+			#links {
+				-webkit-column-count: 3;
+				-moz-column-count: 3;
+				column-count: 3;
+			}
+		</style>
+	</head>
+	<script>
+
+		var links = [
+			{name: "Inbox", url: "inbox.google.com"},
+			{name: "Email", url: "email.cmu.edu"},
+			{name: "Calendar", url: "calendar.google.com"},
+			{name: "Wolfram", url: "wolframalpha.com"},
+			{name: "Pastebin", url: "pastebin.com"},
+			{name: "Spotify", url: "play.spotify.com"},
+			{name: "Songza", url: "songza.com"},
+			{name: "YouTube", url: "youtube.com"},
+			{name: "Reddit", url: "reddit.com"},
+			{name: "CodePen", url: "codepen.io"},
+			{name: "AWS", url: "us-west-1.console.aws.amazon.com"},
+			{name: "Bb", url: "blackboard.andrew.cmu.edu"},
+			{name: "Piazza", url: "piazza.com/class"},
+			{name: "15-150", url: "cs.cmu.edu/~15150"},
+			{name: "SIO", url: "s3.andrew.cmu.edu/sio"},
+			{name: "Trak", url: "cmu.edu/tartantrak"},
+			{name: "Tickets", url: "carnegiemellontickets.com"},
+			{name: "LaTeX", url: "sharelatex.com"},
+			{name: "deTeXify", url: "detexify.kirelabs.org/classify.html"},
+			{name: "clarks", url: "californiaclarks.com"},
+			{name: "sclark.io", url: "sclark.io"}
+		];
+		var search = [
+			{name: "wikipedia", key: "w ", url: "https://en.wikipedia.org/w/index.php", param: "search"},
+			{name: "google", key: "g ", url: "https://www.google.com/search", param: "q"},
+			{name: "duckduckgo", key: "d ", url: "https://duckduckgo.com/", param: "q"},
+			{name: "wolframalpha", key: "a ", url: "http://www.wolframalpha.com/input/", param: "i"},
+			{name: "youtube", key: "y ", url: "https://www.youtube.com/results", param: "search_query"},
+			{name: "the web", key: "! ", url: "goto.html", param: "site"}
+		];
+
+		function clear_div(id) {
+			var div = document.getElementById(id);
+			while (div.firstChild) {
+				div.removeChild(div.firstChild);
+			}
+		}
+
+		function populate_links() {
+			clear_div("links");
+			var search = document.getElementById("search").value.toLowerCase();
+
+			for (var i = 0; i < links.length; i++) {
+				if (search == "" || links[i].name.toLowerCase().indexOf(search) > -1) {
+					var entry = document.createElement("div");
+					entry.className = "entry";
+					var link = document.createElement("a");
+					link.href = "http://"+links[i].url;
+					var img = document.createElement("img");
+					img.className = "ico";
+					img.src = "images/"+links[i].name.toLowerCase()+".ico";
+					var span = document.createElement("span");
+					span.textContent = links[i].name;
+
+					entry.appendChild(img);
+					entry.appendChild(span);
+					link.appendChild(entry);
+					document.getElementById("links").appendChild(link);
+				}
+			}
+
+			if (!document.getElementById("links").firstChild) 
+				document.getElementById("links").style.visibility = "hidden";
+			else
+				document.getElementById("links").style.visibility = "visible";
+		}
+
+		function process_form() {
+			var key = document.getElementById("search").value.substring(0, 2);
+			for (var i = 0; i < search.length; i++) {
+				if (key == search[i].key) {
+					document.getElementById("search-form").action = search[i].url;
+					document.getElementById("search").name = search[i].param;
+					document.getElementById("search").placeholder = "Search "+search[i].name+"...";
+					document.getElementById("search").value = document.getElementById("search").value.substring(2);
+				}
+			}
+		}
+
+		window.addEventListener('load', populate_links);
+		window.addEventListener('keyup', function(){ process_form(); populate_links(); });
+		window.addEventListener('keydown', function(){ process_form(); populate_links(); });
+		window.addEventListener('keydown', function(){ document.getElementById("search").focus(); });
+
+	</script>
+	<body>
+		<div class="card">
+			<form id="search-form" method="get" action="https://www.google.com/search">
+				<input id="search" name="q" placeholder="Search the web..." autocomplete="off" autofocus>
+			</form>
+		</div>
+		<div class="card" id="links">
+		</div>
+	</body>
+</html>

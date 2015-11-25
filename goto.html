@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<title>Stephen's Startpage</title>
+		<script>
+			window.addEventListener('load', function(){
+				try {
+					var site = decodeURIComponent(window.location.search.match(/(\?|&)site\=([^&]*)/)[2]);
+					if (site.indexOf("://") == -1) site = "http://"+site;
+					window.location.href = site;
+				}
+				catch(err) {
+					window.location.href = "http://sclark.io/error"
+				}
+			});
+		</script>
+	</head>
+	<body>
+	Please wait...
+	</body>
+</hmtl>
