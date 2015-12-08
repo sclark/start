@@ -1,7 +1,6 @@
 <html>
 	<head>
 		<title>Stephen's Startpage</title>
-		<link rel="icon" href="images/sclark.io.ico" type="image/x-icon">
 		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Montserrat:400,700">
 		<style>
 			* {
@@ -70,26 +69,29 @@
 
 		var links = [
 			{name: "Inbox", url: "inbox.google.com"},
-			{name: "Email", url: "email.cmu.edu"},
 			{name: "Calendar", url: "calendar.google.com"},
-			{name: "Wolfram", url: "wolframalpha.com"},
-			{name: "Pastebin", url: "pastebin.com"},
 			{name: "Spotify", url: "play.spotify.com"},
 			{name: "Songza", url: "songza.com"},
 			{name: "YouTube", url: "youtube.com"},
 			{name: "Reddit", url: "reddit.com"},
+			{name: "FMag", url: "fedoramagazine.org"},
+			{name: "Wolfram", url: "wolframalpha.com"},
+			{name: "Pastebin", url: "pastebin.com"},
 			{name: "CodePen", url: "codepen.io"},
 			{name: "GitHub", url: "github.com"},
-			{name: "Bb", url: "blackboard.andrew.cmu.edu"},
-			{name: "Piazza", url: "piazza.com/class"},
-			{name: "15-150", url: "cs.cmu.edu/~15150"},
-			{name: "SIO", url: "s3.andrew.cmu.edu/sio"},
-			{name: "Trak", url: "cmu.edu/tartantrak"},
-			{name: "Tickets", url: "carnegiemellontickets.com"},
+			{name: "Heroku", url: "dashboard.heroku.com"},
 			{name: "LaTeX", url: "sharelatex.com"},
 			{name: "deTeXify", url: "detexify.kirelabs.org/classify.html"},
+			{name: "Piazza", url: "piazza.com/class"},
+			{name: "15-150", url: "cs.cmu.edu/~15150"},
+			{name: "Email", url: "email.cmu.edu"},
+			{name: "Bb", url: "blackboard.andrew.cmu.edu"},
+			{name: "Trak", url: "cmu.edu/tartantrak"},
+			{name: "SIO", url: "s3.andrew.cmu.edu/sio"},
+      {name: "dining", url: "webapps.studentaffairs.cmu.edu/dining/ConceptInfo/?page=searchConcepts&OpenNow=on"},
+			{name: "Tickets", url: "carnegiemellontickets.com"},
 			{name: "clarks", url: "californiaclarks.com"},
-			{name: "sclark.io", url: "sclark.io"}
+			{name: "sclark.io", url: "sclark.io"},
 		];
 		var search = [
 			{name: "wikipedia", key: "w ", url: "https://en.wikipedia.org/w/index.php", param: "search"},
@@ -119,7 +121,7 @@
 					link.href = "http://"+links[i].url;
 					var img = document.createElement("img");
 					img.className = "ico";
-					img.src = "images/"+links[i].name.toLowerCase()+".ico";
+					img.src = "http://google.com/s2/favicons?domain="+links[i].url;
 					var span = document.createElement("span");
 					span.textContent = links[i].name;
 
