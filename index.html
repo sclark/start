@@ -110,6 +110,15 @@
 		for (var i = 0; i < tickers.length; i++) {
 			tickers_query += tickers[i].name+",";
 		}
+		var weather = [
+			{city: "Pittsburgh, PA"},
+			{city: "San Diego, CA"},
+		];
+		var weather_query = "";
+		for (var i = 0; i < weather.length; i++) {
+			weather_query += "text='"+weather[i].city+"' or ";
+		}
+		weather_query = weather_query.substring(0, weather_query.length-3);
 
 		function clear_div(id) {
 			var div = document.getElementById(id);
@@ -141,6 +150,27 @@
 		function get_tickers() {
 			var script = document.createElement('script');
 			script.src = 'http://finance.yahoo.com/webservice/v1/symbols/'+tickers_query+'/quote?format=json&view=detail&callback=populate_tickers';
+			document.head.appendChild(script);
+		}
+
+		function populate_weather(data) {
+			clear_div("weather");
+
+			var cities = data.query.results.channel;
+			for (var i = 0; i < cities.length; i++) {
+				var entry = document.createElement("div");
+				entry.className = "entry";
+				entry.style.textAlign = "center";
+				var span = document.createElement("span");
+				span.innerHTML = weather[i].city + ": "+ cities[i].item.condition.temp + "&deg;F and " + cities[i].item.condition.text;
+
+				entry.appendChild(span);
+				document.getElementById("weather").appendChild(entry);
+			}
+		}
+		function get_weather() {
+			var script = document.createElement('script');
+			script.src = 'https://query.yahooapis.com/v1/public/yql?q=select item.condition from weather.forecast where woeid in (select woeid from geo.places(1) where '+weather_query+')&format=json&view=detail&env=store://datatables.org/alltableswithkeys&callback=populate_weather';
 			document.head.appendChild(script);
 		}
 
@@ -185,7 +215,7 @@
 			}
 		}
 
-		window.addEventListener('load', function(){ populate_links(); get_tickers(); });
+		window.addEventListener('load', function(){ populate_links(); get_tickers(); get_weather(); });
 		window.addEventListener('keyup', function(){ process_form(); populate_links(); });
 		window.addEventListener('keydown', function(){ process_form(); populate_links(); });
 		window.addEventListener('keydown', function(){ document.getElementById("search").focus(); });
@@ -200,6 +230,8 @@
 		<div class="card" id="links">
 		</div>
 		<div class="card" id="tickers">
+		</div>
+		<div class="card" id="weather">
 		</div>
 	</body>
 </html>
