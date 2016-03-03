@@ -48,7 +48,7 @@
 			}
 			#search {
 				width: 100%;
-				font-family: Montserrat, arial, sans-serif;
+				font-family: inherit;
 				font-size: 20px;
 				padding: 5px;
 				border: 1px solid #aaa;
@@ -58,7 +58,7 @@
 			#search:focus, #search:hover {
 				border-color: #3498db;
 			}
-			#links {
+			#links, #tickers {
 				-webkit-column-count: 3;
 				-moz-column-count: 3;
 				column-count: 3;
@@ -71,25 +71,19 @@
 			{name: "Inbox", url: "inbox.google.com"},
 			{name: "Calendar", url: "calendar.google.com"},
 			{name: "Spotify", url: "play.spotify.com"},
-			{name: "Songza", url: "songza.com"},
 			{name: "YouTube", url: "youtube.com"},
 			{name: "Reddit", url: "reddit.com"},
 			{name: "FMag", url: "fedoramagazine.org"},
-			{name: "Wolfram", url: "wolframalpha.com"},
-			{name: "Pastebin", url: "pastebin.com"},
 			{name: "CodePen", url: "codepen.io"},
 			{name: "GitHub", url: "github.com"},
 			{name: "Heroku", url: "dashboard.heroku.com"},
 			{name: "LaTeX", url: "sharelatex.com"},
-			{name: "deTeXify", url: "detexify.kirelabs.org/classify.html"},
 			{name: "Piazza", url: "piazza.com/class"},
 			{name: "15-251", url: "cs.cmu.edu/~15251"},
-			{name: "Email", url: "email.cmu.edu"},
 			{name: "Bb", url: "blackboard.andrew.cmu.edu"},
 			{name: "Trak", url: "cmu.edu/tartantrak"},
 			{name: "SIO", url: "s3.andrew.cmu.edu/sio"},
       {name: "dining", url: "webapps.studentaffairs.cmu.edu/dining/ConceptInfo/?page=searchConcepts&OpenNow=on"},
-			{name: "Tickets", url: "carnegiemellontickets.com"},
 			{name: "clarks", url: "californiaclarks.com"},
 			{name: "sclark.io", url: "sclark.io"},
 		];
@@ -99,14 +93,55 @@
 			{name: "duckduckgo", key: "d ", url: "https://duckduckgo.com/", param: "q"},
 			{name: "wolframalpha", key: "a ", url: "http://www.wolframalpha.com/input/", param: "i"},
 			{name: "youtube", key: "y ", url: "https://www.youtube.com/results", param: "search_query"},
-			{name: "the web", key: "! ", url: "goto.html", param: "site"}
+			{name: "the web", key: "! ", url: "goto.html", param: "site"},
 		];
+		var tickers = [
+			{name: "SPY"},
+			{name: "XLF"},
+			{name: "IWM"},
+			{name: "QQQ"},
+			{name: "XlI"},
+			{name: "MCD"},
+			{name: "WMT"},
+			{name: "PLAY"},
+			{name: "OUTR"},
+		];
+		var tickers_query = "";
+		for (var i = 0; i < tickers.length; i++) {
+			tickers_query += tickers[i].name+",";
+		}
 
 		function clear_div(id) {
 			var div = document.getElementById(id);
 			while (div.firstChild) {
 				div.removeChild(div.firstChild);
 			}
+		}
+
+		function populate_tickers(data) {
+			clear_div("tickers");
+
+			var stocks = data.list.resources;
+			for (var i = 0; i < stocks.length; i++) {
+				var entry = document.createElement("div");
+				entry.className = "entry";
+				var link = document.createElement("a");
+				link.href = "http://finance.yahoo.com/q?s=" + stocks[i].resource.fields.symbol;
+				entry.style.color = (stocks[i].resource.fields.change >= 0) ? "#2ECC71" : "#E74C3C";
+				entry.style.textAlign = "center";
+				var span = document.createElement("span");
+				span.textContent = stocks[i].resource.fields.symbol + ": " + Math.round(stocks[i].resource.fields.price*100)/100;
+
+				entry.appendChild(span);
+				link.appendChild(entry);
+				document.getElementById("tickers").appendChild(link);
+			}
+		}
+
+		function get_tickers() {
+			var script = document.createElement('script');
+			script.src = 'http://finance.yahoo.com/webservice/v1/symbols/'+tickers_query+'/quote?format=json&view=detail&callback=populate_tickers';
+			document.head.appendChild(script);
 		}
 
 		function populate_links() {
@@ -133,9 +168,9 @@
 			}
 
 			if (!document.getElementById("links").firstChild)
-				document.getElementById("links").style.visibility = "hidden";
+				document.getElementById("links").style.display = "none";
 			else
-				document.getElementById("links").style.visibility = "visible";
+				document.getElementById("links").style.display = "block";
 		}
 
 		function process_form() {
@@ -150,7 +185,7 @@
 			}
 		}
 
-		window.addEventListener('load', populate_links);
+		window.addEventListener('load', function(){ populate_links(); get_tickers(); });
 		window.addEventListener('keyup', function(){ process_form(); populate_links(); });
 		window.addEventListener('keydown', function(){ process_form(); populate_links(); });
 		window.addEventListener('keydown', function(){ document.getElementById("search").focus(); });
@@ -163,6 +198,8 @@
 			</form>
 		</div>
 		<div class="card" id="links">
+		</div>
+		<div class="card" id="tickers">
 		</div>
 	</body>
 </html>
