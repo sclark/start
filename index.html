@@ -1,14 +1,14 @@
 <html>
 	<head>
 		<title>Stephen's Startpage</title>
-		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Montserrat:400,700">
+		<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto:700">
 		<style>
 			* {
 				padding: 0;
 				margin: 0;
 			}
 			body {
-				font-family: Montserrat, arial, sans-serif;
+				font-family: Roboto, arial, sans-serif;
 				background-color: #ccc;
 				color: #95a5a6;
 				padding: 25px;
@@ -68,24 +68,30 @@
 	<script>
 
 		var links = [
-			{name: "Inbox", url: "inbox.google.com"},
+			{name: "GMail", url: "mail.google.com"},
 			{name: "Calendar", url: "calendar.google.com"},
-			{name: "Spotify", url: "play.spotify.com"},
 			{name: "YouTube", url: "youtube.com"},
+			{name: "Spotify", url: "play.spotify.com"},
 			{name: "Reddit", url: "reddit.com"},
-			{name: "FMag", url: "fedoramagazine.org"},
-			{name: "CodePen", url: "codepen.io"},
 			{name: "GitHub", url: "github.com"},
-			{name: "Heroku", url: "dashboard.heroku.com"},
-			{name: "LaTeX", url: "sharelatex.com"},
+			{name: "Codepen", url: "codepen.io"},
+			{name: "Weather", url: "google.com/search?q=weather"},
+			{name: "15-213", url: "cs.cmu.edu/~213/schedule.html"},
+			{name: "Autolab", url: "autolab.andrew.cmu.edu"},
 			{name: "Piazza", url: "piazza.com/class"},
-			{name: "15-251", url: "cs.cmu.edu/~15251"},
 			{name: "Bb", url: "blackboard.andrew.cmu.edu"},
-			{name: "Trak", url: "cmu.edu/tartantrak"},
+			{name: "Handshake", url: "cmu.joinhandshake.com"},
 			{name: "SIO", url: "s3.andrew.cmu.edu/sio"},
-      {name: "dining", url: "webapps.studentaffairs.cmu.edu/dining/ConceptInfo/?page=searchConcepts&OpenNow=on"},
+			{name: "classes", url: "docs.google.com/spreadsheets/d/12LW1qsE--whppB1Renbb-Az-MXJTCE1jJxefEY1tLlE"},
+			{name: "grades-f16", url: "docs.google.com/spreadsheets/d/1TcD6uWShqO3vgtVkqW4WHpVRQZFrZSDUgP59El1Uz4I"},
+			{name: "Vanguard", url: "investor.vanguard.com"},
+			{name: "Ally Bank", url: "ally.com/?context=bank"},
+			{name: "NICU", url: "northislandcu.com"},
+			{name: "Markets", url: "http://money.cnn.com/data/premarket/"},
+			{name: "Charts", url: "stockstracker.com"},
 			{name: "clarks", url: "californiaclarks.com"},
-			{name: "sclark.io", url: "sclark.io"},
+			{name: "sclark.io", url: "sclark.io?source=start-page"},
+			{name: "chameleon", url: "chameleon.sclark.io/dashboard"}
 		];
 		var search = [
 			{name: "wikipedia", key: "w ", url: "https://en.wikipedia.org/w/index.php", param: "search"},
@@ -97,19 +103,20 @@
 		];
 		var tickers = [
 			{name: "SPY"},
-			{name: "XLF"},
-			{name: "IWM"},
-			{name: "QQQ"},
-			{name: "XlI"},
+			{name: "VTWO"},
+			{name: "VTI"},
+			{name: "AAPL"},
 			{name: "MCD"},
 			{name: "WMT"},
-			{name: "PLAY"},
-			{name: "OUTR"},
+			{name: "GPRO"},
+			{name: "WYNN"},
+			{name: "RH"},
 		];
 		var tickers_query = "";
 		for (var i = 0; i < tickers.length; i++) {
-			tickers_query += tickers[i].name+",";
+			tickers_query += "\""+tickers[i].name+"\",";
 		}
+		tickers_query = tickers_query.substring(0,tickers_query.length-1)
 		var weather = [
 			{city: "Pittsburgh, PA"},
 			{city: "San Diego, CA"},
@@ -130,16 +137,16 @@
 		function populate_tickers(data) {
 			clear_div("tickers");
 
-			var stocks = data.list.resources;
+			var stocks = data.query.results.quote;
 			for (var i = 0; i < stocks.length; i++) {
 				var entry = document.createElement("div");
 				entry.className = "entry";
 				var link = document.createElement("a");
-				link.href = "http://finance.yahoo.com/q?s=" + stocks[i].resource.fields.symbol;
-				entry.style.color = (stocks[i].resource.fields.change >= 0) ? "#2ECC71" : "#E74C3C";
+				link.href = "http://finance.yahoo.com/q?s=" + stocks[i].symbol;
+				entry.style.color = (stocks[i].Change.indexOf("+") > -1) ? "#2ECC71" : "#E74C3C";
 				entry.style.textAlign = "center";
 				var span = document.createElement("span");
-				span.textContent = stocks[i].resource.fields.symbol + ": " + Math.round(stocks[i].resource.fields.price*100)/100;
+				span.textContent = stocks[i].symbol + ": " + Math.round(parseFloat(stocks[i].Ask)*100)/100;
 
 				entry.appendChild(span);
 				link.appendChild(entry);
@@ -149,7 +156,7 @@
 
 		function get_tickers() {
 			var script = document.createElement('script');
-			script.src = 'http://finance.yahoo.com/webservice/v1/symbols/'+tickers_query+'/quote?format=json&view=detail&callback=populate_tickers';
+			script.src = 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20('+tickers_query+')&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=populate_tickers';
 			document.head.appendChild(script);
 		}
 
